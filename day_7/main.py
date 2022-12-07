@@ -15,13 +15,12 @@ def sum_dict(dictionary):
 
 def walk_path(path_sizes, obj):
     sum_for_path = sum_dict(obj)
-    if sum_for_path <= 100_000:
-        path_sizes.append(sum_for_path)
+    path_sizes.append(sum_for_path)
     for k, v in obj.items():
         if isinstance(v, dict):
-            return walk_path(path_sizes, v)
+            path_sizes.append(walk_path(path_sizes, v))
 
-    return sum(path_sizes)
+    return path_sizes
 
 
 def solve(my_input):
@@ -46,7 +45,15 @@ def solve(my_input):
             size, file_name = line.split(" ")
             pwd[file_name] = int(size)
 
-    return walk_path([], my_filepath)
+    messy_file_sizes = walk_path([], my_filepath)
+    total_disk_space = messy_file_sizes[0]  # outermost path sum
+    final_counter = 0
+    for item in messy_file_sizes:
+        if isinstance(item, int):
+            if item <= 100_000:
+                final_counter += item
+
+    return final_counter
 
 
 if __name__ == "__main__":
